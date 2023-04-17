@@ -1,0 +1,42 @@
+# Basic LLM node that calls for a Large Language Model for completion.
+from nodes.Node import Node
+from nodes.NodeCofig import *
+import openai
+import os
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
+OPENAI_MODELS = ["text-davinci-003", "text-davinci-002"]
+
+
+class LLMNode(Node):
+    def __init__(self, name="BaseLLMNode", model_name="text-davinci-003", stop=[], input_type=str, output_type=str):
+        super().__init__(name, input_type, output_type)
+        self.model_name = model_name
+        self.stop = stop
+
+    def run(self, input, log=False):
+        assert isinstance(input, self.input_type)
+        response = self.call_llm(input, self.stop)
+        completion = response["output"]
+        if log:
+            return response
+        return completion
+
+    def call_llm(self, prompt, stop):
+        if self.model_name in OPENAI_MODELS:
+            response = openai.Completion.create(
+                model=self.model_name,
+                prompt=prompt,
+                temperature=OPENAI_CONFIG["temperature"],
+                max_tokens=OPENAI_CONFIG["max_tokens"],
+                top_p=OPENAI_CONFIG["top_p"],
+                frequency_penalty=OPENAI_CONFIG["frequency_penalty"],
+                presence_penalty=OPENAI_CONFIG["presence_penalty"],
+                stop=stop
+            )
+            return {"input": prompt,
+                    "output": response["choices"][0]["text"],
+                    "prompt_tokens": response["usage"]["prompt_tokens"],
+                    "completion_tokens": response["usage"]["completion_tokens"]}
+        else:
+            raise ValueError("Model not supported")
