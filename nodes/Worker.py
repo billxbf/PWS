@@ -142,7 +142,8 @@ class LLMWorker(Node):
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
         llm = OpenAI(temperature=0)
-        prompt = PromptTemplate(template="Respond directly with no extra words.\n\n{request}", input_variables=["request"])
+        prompt = PromptTemplate(template="Respond directly with no extra words.\n\n{request}",
+                                input_variables=["request"])
         tool = LLMChain(prompt=prompt, llm=llm, verbose=False)
         response = tool(input)
         evidence = response["text"].strip("\n")

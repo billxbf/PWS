@@ -1,11 +1,12 @@
-from langchain.agents import AgentType
-from langchain import OpenAI, Wikipedia
-from langchain.agents import initialize_agent, Tool
-from langchain.agents.react.base import DocstoreExplorer
-from langchain.callbacks import get_openai_callback
-from langchain.agents import load_tools
-from utils.CustomDocstoreExplorer import CustomDocstoreExplorer
 import time
+
+from langchain import OpenAI, Wikipedia
+from langchain.agents import AgentType
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import load_tools
+from langchain.callbacks import get_openai_callback
+
+from utils.CustomDocstoreExplorer import CustomDocstoreExplorer
 
 
 class ReactBase:
@@ -58,6 +59,7 @@ class ReactBase:
                                       agent=AgentType.REACT_DOCSTORE,
                                       verbose=self.verbose,
                                       return_intermediate_steps=True)
+
     def _parse_tool(self, intermediate_steps):
         tool_usage = {"search": 0, "lookup": 0}
         for step in intermediate_steps:
@@ -96,7 +98,8 @@ class ReactZeroShot(ReactBase):
             result["total_tokens"] = cb.total_tokens + result["tool_usage"]["llm-math_token"]
             result["prompt_tokens"] = cb.prompt_tokens
             result["completion_tokens"] = cb.completion_tokens
-            result["total_cost"] = cb.total_cost + result["tool_usage"]["llm-math_token"] * 0.000002 + result["tool_usage"]["serpapi"] * 0.01  # Developer Plan
+            result["total_cost"] = cb.total_cost + result["tool_usage"]["llm-math_token"] * 0.000002 + \
+                                   result["tool_usage"]["serpapi"] * 0.01  # Developer Plan
 
         return result
 

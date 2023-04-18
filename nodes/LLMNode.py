@@ -1,8 +1,10 @@
 # Basic LLM node that calls for a Large Language Model for completion.
+import os
+
+import openai
+
 from nodes.Node import Node
 from nodes.NodeCofig import *
-import openai
-import os
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 OPENAI_MODELS = ["text-davinci-003", "text-davinci-002"]
