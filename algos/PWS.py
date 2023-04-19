@@ -24,7 +24,7 @@ class PWS:
         self.google_unit_price = 0.01
 
     # input: the question line. e.g. "Question: What is the capital of France?"
-    def run(self, input, log=False):
+    def run(self, input):
         # run is stateless, so we need to reset the evidences
         self._reinitialize()
         result = {}
@@ -62,10 +62,7 @@ class PWS:
                                  + self.tool_counter.get("Calculator_token", 0)
         result["total_cost"] = result["total_tokens"] * self.token_unit_price + self.tool_counter.get("Google",
                                                                                                       0) * self.google_unit_price
-
-        if log:
-            return result
-        return output
+        return result
 
     def _parse_plans(self, response):
         plans = []
@@ -117,13 +114,13 @@ class PWS:
         self.tool_counter = {}
 
 
-class PWS_Base_HotpotQA(PWS):
-    def __init__(self):
+class PWS_Base(PWS):
+    def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_BASE):
         super().__init__(available_tools=["Wikipedia", "LLM"],
-                         fewshot=fewshots.HOTPOTQA_PWS_BASE)
+                         fewshot=fewshot)
 
 
-class PWS_Unlimited_HotpotQA(PWS):
-    def __init__(self):
+class PWS_Unlimited(PWS):
+    def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_UNLIMITED):
         super().__init__(available_tools=["LLM", "Google", "Calculator"],
-                         fewshot=fewshots.HOTPOTQA_PWS_UNLIMITED)
+                         fewshot=fewshot)
