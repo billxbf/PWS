@@ -6,6 +6,7 @@ from nodes.Planner import Planner
 from nodes.Solver import Solver
 from nodes.Worker import *
 from prompts import fewshots
+from utils.util import *
 
 
 class PWS:
@@ -20,7 +21,9 @@ class PWS:
         self.planner_evidences = {}
         self.worker_evidences = {}
         self.tool_counter = {}
-        self.token_unit_price = 0.00002
+        self.planner_token_unit_price = get_token_unit_price(planner_model)
+        self.solver_token_unit_price = get_token_unit_price(solver_model)
+        self.tool_token_unit_price = get_token_unit_price("text-davinci-003")
         self.google_unit_price = 0.01
 
     # input: the question line. e.g. "Question: What is the capital of France?"
@@ -56,12 +59,17 @@ class PWS:
         result["worker_log"] = worker_log
         result["solver_log"] = solver_log
         result["tool_usage"] = self.tool_counter
+        result["steps"] = len(self.plans) + 1
         result["total_tokens"] = planner_response["prompt_tokens"] + planner_response["completion_tokens"] \
                                  + solver_response["prompt_tokens"] + solver_response["completion_tokens"] \
                                  + self.tool_counter.get("LLM_token", 0) \
                                  + self.tool_counter.get("Calculator_token", 0)
-        result["total_cost"] = result["total_tokens"] * self.token_unit_price + self.tool_counter.get("Google",
-                                                                                                      0) * self.google_unit_price
+        result["token_cost"] = self.planner_token_unit_price * (planner_response["prompt_tokens"] + planner_response["completion_tokens"]) \
+                               + self.solver_token_unit_price * (solver_response["prompt_tokens"] + solver_response["completion_tokens"]) \
+                               + self.tool_token_unit_price * (self.tool_counter.get("LLM_token", 0) + self.tool_counter.get("Calculator_token", 0))
+        result["tool_cost"] = self.tool_counter.get("Google", 0) * self.google_unit_price
+        result["total_cost"] = result["token_cost"] + result["tool_cost"]
+
         return result
 
     def _parse_plans(self, response):
@@ -115,12 +123,18 @@ class PWS:
 
 
 class PWS_Base(PWS):
-    def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_BASE):
+    def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_BASE, planner_model="text-davinci-003",
+                 solver_model="text-davinci-003"):
         super().__init__(available_tools=["Wikipedia", "LLM"],
-                         fewshot=fewshot)
+                         fewshot=fewshot,
+                         planner_model=planner_model,
+                         solver_model=solver_model)
 
 
-class PWS_Unlimited(PWS):
-    def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_UNLIMITED):
-        super().__init__(available_tools=["LLM", "Google", "Calculator"],
-                         fewshot=fewshot)
+class PWS_Extra(PWS):
+    def  __init__(self, fewshot=fewshots.HOTPOTQA_PWS_EXTRA, planner_model="text-davinci-003",
+                 solver_model="text-davinci-003"):
+        super().__init__(available_tools=["Wikipedia", "Google", "Calculator", "LLM"],
+                         fewshot=fewshot,
+                         planner_model=planner_model,
+                         solver_model=solver_model)

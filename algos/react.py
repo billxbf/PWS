@@ -5,20 +5,39 @@ from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import load_tools
 from langchain.callbacks import get_openai_callback
+from utils.util import *
+from langchain.chat_models import ChatOpenAI
+from langchain.agents.react.base import ReActDocstoreAgent
+from langchain.tools.base import BaseTool
+from langchain.prompts.base import BasePromptTemplate
+from typing import Any, List, Optional, Sequence, Tuple
+from prompts.wiki_prompt import *
 
 from utils.CustomDocstoreExplorer import CustomDocstoreExplorer
 
 
 class ReactBase:
-    def __init__(self, model_name="text-davinci-003", verbose=True):
+    def __init__(self, fewshot, model_name="text-davinci-002", max_iter=8, verbose=True):
         self.model_name = model_name
+        self.max_iter = max_iter
         self.verbose = verbose
+        self.fewshot = fewshot
         self.tools = self._load_tools()
-        self.agent = initialize_agent(self.tools,
-                                      OpenAI(temperature=0, model_name=self.model_name),
-                                      agent=AgentType.REACT_DOCSTORE,
-                                      verbose=self.verbose,
-                                      return_intermediate_steps=True)
+        if model_name in OPENAI_COMPLETION_MODELS:
+            self.agent = initialize_agent(self.tools,
+                                          OpenAI(temperature=0, model_name=self.model_name),
+                                          agent=AgentType.REACT_DOCSTORE,
+                                          verbose=self.verbose,
+                                          return_intermediate_steps=True,
+                                          max_iterations=max_iter)
+        elif model_name in OPENAI_CHAT_MODELS:
+            self.agent = initialize_agent(self.tools,
+                                          ChatOpenAI(temperature=0, model_name=self.model_name),
+                                          agent=AgentType.REACT_DOCSTORE,
+                                          verbose=self.verbose,
+                                          return_intermediate_steps=True,
+                                          max_iterations=max_iter)
+        self.agent.agent.llm_chain.prompt.template = fewshot
 
     def run(self, prompt):
         self.reset()
@@ -35,6 +54,9 @@ class ReactBase:
             result["prompt_tokens"] = cb.prompt_tokens
             result["completion_tokens"] = cb.completion_tokens
             result["total_cost"] = cb.total_cost
+            result["steps"] = len(response["intermediate_steps"]) + 1
+            result["token_cost"] = result["total_cost"]
+            result["tool_cost"] = 0
         return result
 
     def _load_tools(self):
@@ -54,11 +76,21 @@ class ReactBase:
 
     def reset(self):
         self.tools = self._load_tools()
-        self.agent = initialize_agent(self.tools,
-                                      OpenAI(temperature=0, model_name=self.model_name),
-                                      agent=AgentType.REACT_DOCSTORE,
-                                      verbose=self.verbose,
-                                      return_intermediate_steps=True)
+        if self.model_name in OPENAI_COMPLETION_MODELS:
+            self.agent = initialize_agent(self.tools,
+                                          OpenAI(temperature=0, model_name=self.model_name),
+                                          agent=AgentType.REACT_DOCSTORE,
+                                          verbose=self.verbose,
+                                          return_intermediate_steps=True,
+                                          max_iterations=self.max_iter)
+        elif self.model_name in OPENAI_CHAT_MODELS:
+            self.agent = initialize_agent(self.tools,
+                                          ChatOpenAI(temperature=0, model_name=self.model_name),
+                                          agent=AgentType.REACT_DOCSTORE,
+                                          verbose=self.verbose,
+                                          return_intermediate_steps=True,
+                                          max_iterations=self.max_iter)
+        self.agent.agent.llm_chain.prompt.template = self.fewshot
 
     def _parse_tool(self, intermediate_steps):
         tool_usage = {"search": 0, "lookup": 0}

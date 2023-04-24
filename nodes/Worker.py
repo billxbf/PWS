@@ -13,7 +13,7 @@ class GoogleWorker(Node):
         super().__init__(name, input_type=str, output_type=str)
         self.isLLMBased = False
         self.description = "Worker that searches results from Google. Useful when you need to find short " \
-                           "and general answers about a specific topic. Input should be a search query."
+                           "and succinct answers about a specific topic. Input should be a search query."
 
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
