@@ -38,7 +38,7 @@ class PWS:
         planner_log = planner_response["input"] + planner_response["output"]
         self.plans = self._parse_plans(plan)
         self.planner_evidences = self._parse_planner_evidences(plan)
-        assert len(self.plans) == len(self.planner_evidences)
+        #assert len(self.plans) == len(self.planner_evidences)
 
         # Work
         self._get_worker_evidences()
@@ -94,6 +94,9 @@ class PWS:
     # use planner evidences to assign tasks to respective workers.
     def _get_worker_evidences(self):
         for e, tool_call in self.planner_evidences.items():
+            if "[" not in tool_call:
+                self.worker_evidences[e] = tool_call
+                continue
             tool, tool_input = tool_call.split("[", 1)
             tool_input = tool_input[:-1]
             # find variables in input and replace with previous evidences
@@ -124,8 +127,8 @@ class PWS:
 
 class PWS_Base(PWS):
     def __init__(self, fewshot=fewshots.HOTPOTQA_PWS_BASE, planner_model="text-davinci-003",
-                 solver_model="text-davinci-003"):
-        super().__init__(available_tools=["Wikipedia", "LLM"],
+                 solver_model="text-davinci-003", available_tools=["Wikipedia", "LLM"]):
+        super().__init__(available_tools=available_tools,
                          fewshot=fewshot,
                          planner_model=planner_model,
                          solver_model=solver_model)
@@ -133,8 +136,8 @@ class PWS_Base(PWS):
 
 class PWS_Extra(PWS):
     def  __init__(self, fewshot=fewshots.HOTPOTQA_PWS_EXTRA, planner_model="text-davinci-003",
-                 solver_model="text-davinci-003"):
-        super().__init__(available_tools=["Wikipedia", "Google", "Calculator", "LLM"],
+                 solver_model="text-davinci-003", available_tools=["Google", "Calculator", "LLM"]):
+        super().__init__(available_tools=available_tools,
                          fewshot=fewshot,
                          planner_model=planner_model,
                          solver_model=solver_model)

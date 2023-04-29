@@ -1,0 +1,27 @@
+question,answer,preds,em,f1,acc,wall_time,total_tokens,steps,tool_cost,token_cost,total_cost
+"Gary manages two Amazon distribution centers. The first center processes 10000 packages per day, and the second center processes three times that volume. If Amazon makes 5 cents of profit per package, how much profit per week do the two centers make combined?","First find how many packages the second center processes per day: 10000 packages/day * 3 = <<10000*3=30000>>30000 packages/day
+Then add the packages the first center processes: 30000 packages/day + 10000 packages/day = <<30000+10000=40000>>40000 packages/day
+Then multiply the number of packages by Amazon's profit per package to find Amazon's daily profit: 40000 packages/day * $0.05/package = $2000/day
+Then multiply the daily profits by the number of days in a week to find the weekly profits: $2000/day * 7 days/week = $<<2000*7=14000>>14000/week
+#### 14000","The second center processes 30000 packages per day. 
+The two centers process a total of 40000 packages per day. 
+Amazon makes $2000 of profit per day from the two centers. 
+The two centers make a total of $14000 of profit per week.",False,0.31683168316831684,0,4.426372289657593,127,1,0,0.000254,0.000254
+"The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?","Let M be the number of square feet in Matha's bedroom
+Jenny's bedroom is M+60 square feet.
+M+M+60=300
+2M+60=300
+2M=240
+M=<<120=120>>120
+Martha's bedroom is 120 square feet.
+#### 120",120 square feet.,False,0.19999999999999998,1,0.4466969966888428,70,1,0,0.00014,0.00014
+"Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?","Toby: 2x-10
+Rebecca: (2x-10)-8=2x-18
+Total:2x-10+2x-18+x=157
+5x-28=157
+5x=185
+x=<<37=37>>37 hours
+Rebecca:2(37)-18=56 hours
+#### 56","What is Thomas's total number of hours worked in the week? x
+How many hours did Toby work in the week? 2x-10
+How many hours did Rebecca work in the week? 2x-18",False,0.2439024390243903,0,3.5132803916931152,119,1,0,0.00023799999999999998,0.00023799999999999998

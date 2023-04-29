@@ -11,6 +11,8 @@ class DataLoader:
             return self.load_fever(sample_size=sample_size, type=type)
         elif self.data == "trivia_qa":
             return self.load_trivia_qa(sample_size=sample_size, type=type)
+        elif self.data == "gsm8k":
+            return self.load_gsm8k(sample_size=sample_size, type=type)
         else:
             raise ValueError("Data not supported.")
 
@@ -31,6 +33,13 @@ class DataLoader:
     def load_trivia_qa(self, cache_dir="data/trivia_qa", sample_size=100, type="test"):
         assert type in ["train", "validation", "test"]
         data = datasets.load_dataset('trivia_qa', 'rc.nocontext', cache_dir=cache_dir)
+        df = data[type].to_pandas()
+        sampled_df = df.sample(sample_size, random_state=self.seed)[["question", "answer"]].reset_index(drop=True)
+        return sampled_df
+
+    def load_gsm8k(self, cache_dir="data/gsm8k", sample_size=100, type="test"):
+        assert type in ["train", "validation", "test"]
+        data = datasets.load_dataset('gsm8k', name="main", cache_dir=cache_dir)
         df = data[type].to_pandas()
         sampled_df = df.sample(sample_size, random_state=self.seed)[["question", "answer"]].reset_index(drop=True)
         return sampled_df

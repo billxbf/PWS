@@ -30,27 +30,92 @@ Plan: Search for more information about First for Women.
 #E2 = Wikipedia[First for Women]
 Plan: Compare the two start dates and determine which magazine was started first.
 #E3 = LLM[Which magazine was started first Arthur's Magazine or First for Women? Given context: #E1, #E2]
+
 '''
 
-HOTPOTQA_PWS_EXTRA = '''Question: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
-Plan: Search for more information about Colorado orogeny.
-#E1 = Wikipedia[Colorado orogeny]
-Plan: Find out the area that eastern sector of the Colorado orogeny extends into.
-#E2 = LLM[What is the name of the area that eastern sector of Colorado extends into? Given context: #E1]
-Plan: Search for more information about the area.
-#E3 = Wikipedia[#E2]
-Plan: Find out the elevation range for the area.
-#E4 = LLM[What is elevation range for the area #E2? Given context: #E3]
-Plan: Check on Google to see if the elevation range is correct.
-#E5 = Google[Is the elevation range for #E2 #E4?]
+HOTPOTQA_PWS_EXTRA = '''Question: What is Leo Dicaprio's girlfriend's age to the power of 0.34? 
+Plan: Find out the name of Leo Dicaprio's girlfriend.
+#E1 = Google[name of Leo Dicaprio's girlfriend] 
+Plan: Find out the age of Leo Dicaprio's girlfriend.
+#E2 = Google[age of #E1]
+Plan: Calculate her age to the power of 0.34.
+#E3 = Calculator[#E2^0.34] 
+'''
 
-Question: Which magazine was started first Arthur's Magazine or First for Women?
-Plan: Search for more information about Arthur's Magazine.
-#E1 = Wikipedia[Arthur's Magazine]
-Plan: Search for more information about First for Women.
-#E2 = Wikipedia[First for Women]
-Plan: Compare the two start dates and determine which magazine was started first.
-#E3 = LLM[Which magazine was started first Arthur's Magazine or First for Women? Given context: #E1, #E2]
-Plan: Check on Google for additional check.
-#E4 = Google[Is #E3 the magazine that was started first among Arthur's Magazine and First for Women?]
+TRIVIAQA_COT = '''What is the name of the river on which Bakewell stands?
+Step 1: Identify the location of Bakewell.
+Bakewell is a small town in Derbyshire, England.
+Step 2: Search for the river that passes through Bakewell.
+The River Wye flows through the town.
+Answer: River Wye
+'''
+
+TRIVIAQA_REACT = '''Solve a question answering task with interleaving Thought, Action, Observation steps. Thought can reason about the current situation, and Action can be three types:
+(1) Search[entity], which searches the exact entity on Wikipedia and returns the first paragraph if it exists. If not, it will return some similar entities to search.
+(2) Lookup[keyword], which returns the next sentence containing keyword in the current passage.
+(3) Finish[answer], which returns the answer and finishes the task.
+Here are some examples.
+
+Question: What is the name of the river on which Bakewell stands?
+Thought: I need to search Bakewell and find out its location.
+Action: Search[Bakewell]
+Observation: Bakewell is a market town and civil parish in the Derbyshire Dales district of Derbyshire, England, known for Bakewell pudding. It lies on the River Wye, 13 miles (21 km) south-west of Sheffield. At the 2011 census, the population of the civil parish was 3,949. It was estimated at 3,695 in 2019. The town is close to the tourist attractions of Chatsworth House and Haddon Hall.
+Thought: Now I know that Bakewell lies on the River Wye.
+Action: Finish[River Wye]
+
+
+Question: {input}
+{agent_scratchpad}
+'''
+
+TRIVIAQA_PWS = '''Which Asian capital city is known as Krung Thep to its inhabitants and stands on the Chao Phraya River?
+Plan: Search for more information about Krung Thep
+#E1 = Wikipedia[Krung Thep]
+Plan: Search for more information about Chao Phraya River
+#E2 = Wikipedia[Chao Phraya River]
+Plan: Find out the name of the river on which Bakewell stands.
+#E3 = LLM[What is the name of the river on which Bakewell stands? Given context: #E1 and #E2]
+
+'''
+
+GSM8K_COT = '''Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?
+Step 1: Translate the problem into algebraic expressions.
+Thomas = x
+Toby = 2x - 10
+Rebecca = (2X - 10) - 8
+Step 2: Use the total hours worked in a week to set up an equation.
+Total hours worked = 157
+x + (2x - 10) + ((2x - 10) - 8) = 157
+Step 3: Solve the equation.
+x + 2x - 10 + 2x - 10 - 8 = 157
+5x - 28 = 157
+5x = 185
+x = 37
+Step 4: Find the number of hours Rebecca worked.
+Rebecca = (2x - 10) - 8
+Rebecca = (2 * 37 - 10) - 8
+Rebecca = 74 - 10 - 8
+Rebecca = 56
+Answer: 56
+'''
+
+GSM8K_PWS = '''Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?
+Plan: Translate the problem into algebraic expressions.
+#E1 = LLM[Translate following problem into algebraic expressions: Thomas, Toby, and Rebecca worked a total of 157 hours in one week. Thomas worked x hours. Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby. How many hours did Rebecca work?]
+Plan: Use Wolfram Alpha to solve the equation.
+#E2 = WolframAlpha[Solve #E1]
+
+The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?
+Plan: Directly ask LLM to give the answer since it is a simple math problem.
+#E1 = LLM[What is the answer to the following problem: The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?]
+
+'''
+
+SOTU_PWS_EXTRA = '''What are other institutions serving for similar goals as NATO?
+PLan: Find out what the goals of NATO are.
+#E1 = SearchSOTU[goals of NATO]
+Plan: Summarize the goals of NATO in several words.
+#E2 = LLM[In several words, summarize the goals of NATO. Given context: #E1]
+Plan: Search for institutions that serve similar goals.
+#E3 = Google[institutions that serve for #E2]
 '''

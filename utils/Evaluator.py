@@ -68,8 +68,8 @@ def llm_accuracy_score(query, prediction, ground_truth):
 
 
 class Evaluator:
-    def __init__(self, task, dataset, algo, maxtry=1):
-        assert task in ["hotpot_qa", "fever", "trivia_qa"]
+    def __init__(self, task, dataset, algo, maxtry=3):
+        assert task in ["hotpot_qa", "fever", "trivia_qa", "gsm8k"]
         assert isinstance(dataset, pd.DataFrame)
         assert isinstance(algo, (PWS_Base, PWS_Extra, ReactBase, IO, CoT))
 
@@ -78,13 +78,11 @@ class Evaluator:
         self.algo = algo
         self.maxtry = maxtry
         self.failed_response = self._failed_response()
+        self.eval_data = self._initialize_eval_dict()
 
     def run(self):
         print("\n******************* Start Evaluation *******************\n")
-        result = {}
-        data = {}
-        if self.task == "hotpot_qa":
-            em, f1, acc, wall_time, steps, total_tokens, token_cost, tool_cost, total_cost, preds = [], [], [], [], [], [], [], [], [], []
+        if self.task in "hotpot_qa":
             for i in tqdm.tqdm(range(len(self.dataset))):
                 question = self.dataset["question"][i]
                 label = self.dataset["answer"][i]
@@ -94,39 +92,9 @@ class Evaluator:
                         break
                     except:
                         response = self.failed_response
-                pred = self._parse_prediction(response["output"])
-                em += [self.get_metrics(question, label, pred)["em"]]
-                f1 += [self.get_metrics(question, label, pred)["f1"]]
-                acc += [self.get_metrics(question, label, pred)["acc"]]
-                wall_time += [response["wall_time"]]
-                total_tokens += [response["total_tokens"]]
-                total_cost += [response["total_cost"]]
-                steps += [response["steps"]]
-                token_cost += [response["token_cost"]]
-                tool_cost += [response["tool_cost"]]
-                preds += [pred]
-            result["avg_em"] = np.nanmean(em)
-            result["avg_f1"] = np.nanmean(f1)
-            result["avg_acc"] = np.nanmean(acc)
-            result["avg_acc"] = np.nanmean(acc)
-            result["avg_wall_time"] = np.nanmean(wall_time)
-            result["avg_total_tokens"] = np.nanmean(total_tokens)
-            result["avg_total_cost"] = np.nanmean(total_cost)
-            result["avg_steps"] = np.nanmean(steps)
-            result["avg_token_cost"] = np.nanmean(token_cost)
-            result["avg_tool_cost"] = np.nanmean(tool_cost)
-            data["preds"] = preds
-            data["em"] = em
-            data["f1"] = f1
-            data["acc"] = acc
-            data["wall_time"] = wall_time
-            data["total_tokens"] = total_tokens
-            data["total_cost"] = total_cost
-            data["steps"] = steps
-            data["token_cost"] = token_cost
-            data["tool_cost"] = tool_cost
+                self._update_eval_dict(question, label, response)
+
         elif self.task == "fever":
-            em, f1, wall_time, steps, total_tokens, token_cost, tool_cost, total_cost, preds = [], [], [], [], [], [], [], [], []
             for i in tqdm.tqdm(range(len(self.dataset))):
                 question = self.dataset["claim"][i]
                 label = self.dataset["label"][i]
@@ -136,36 +104,68 @@ class Evaluator:
                         break
                     except:
                         response = self.failed_response
-                pred = self._parse_prediction(response["output"])
-                em += [self.get_metrics(label, pred)["em"]]
-                f1 += [self.get_metrics(label, pred)["f1"]]
-                wall_time += [response["wall_time"]]
-                total_tokens += [response["total_tokens"]]
-                total_cost += [response["total_cost"]]
-                steps += [response["steps"]]
-                token_cost += [response["token_cost"]]
-                tool_cost += [response["tool_cost"]]
-                preds += [pred]
-            result["avg_em"] = np.nanmean(em)
-            result["avg_f1"] = np.nanmean(f1)
-            result["avg_wall_time"] = np.nanmean(wall_time)
-            result["avg_total_tokens"] = np.nanmean(total_tokens)
-            result["avg_total_cost"] = np.nanmean(total_cost)
-            result["avg_steps"] = np.nanmean(steps)
-            result["avg_token_cost"] = np.nanmean(token_cost)
-            result["avg_tool_cost"] = np.nanmean(tool_cost)
-            data["preds"] = preds
-            data["em"] = em
-            data["f1"] = f1
-            data["wall_time"] = wall_time
-            data["total_tokens"] = total_tokens
-            data["total_cost"] = total_cost
-            data["steps"] = steps
-            data["token_cost"] = token_cost
-            data["tool_cost"] = tool_cost
+                self._update_eval_dict(question, label, response)
         elif self.task == "trivia_qa":
+            for i in tqdm.tqdm(range(len(self.dataset))):
+                question = self.dataset["question"][i]
+                label = self.dataset["answer"][i]["value"]
+                for _ in range(self.maxtry):
+                    try:
+                        response = self.algo.run(question)
+                        break
+                    except:
+                        response = self.failed_response
+                self._update_eval_dict(question, label, response)
+        elif self.task == "gsm8k":
+            for i in tqdm.tqdm(range(len(self.dataset))):
+                question = self.dataset["question"][i]
+                label = self.dataset["answer"][i].split("#### ")[1]
+                for _ in range(self.maxtry):
+                    try:
+                        response = self.algo.run(question)
+                        break
+                    except:
+                        response = self.failed_response
+                self._update_eval_dict(question, label, response)
+        else:
             raise NotImplementedError
-        return result, data
+
+        return self._get_avg_results(), self.eval_data
+
+
+    def _initialize_eval_dict(self):
+        data = {}
+        for d in ["label", "preds", "em", "f1", "acc", "wall_time", "total_tokens", "total_cost", "steps", "token_cost", "tool_cost"]:
+            data[d] = []
+        return data
+
+    def _update_eval_dict(self, question, label, response):
+        pred = self._parse_prediction(response["output"])
+        self.eval_data["label"] += [label]
+        self.eval_data["preds"] += [pred]
+        self.eval_data["em"] += [self.get_metrics(question, label, pred)["em"]]
+        self.eval_data["f1"] += [self.get_metrics(question, label, pred)["f1"]]
+        self.eval_data["acc"] += [self.get_metrics(question, label, pred)["acc"]]
+        self.eval_data["wall_time"] += [response["wall_time"]]
+        self.eval_data["total_tokens"] += [response["total_tokens"]]
+        self.eval_data["total_cost"] += [response["total_cost"]]
+        self.eval_data["steps"] += [response["steps"]]
+        self.eval_data["token_cost"] += [response["token_cost"]]
+        self.eval_data["tool_cost"] += [response["tool_cost"]]
+
+    def _get_avg_results(self):
+        result = {}
+        result["avg_em"] = np.nanmean(self.eval_data["em"])
+        result["avg_f1"] = np.nanmean(self.eval_data["f1"])
+        result["avg_acc"] = np.nanmean(self.eval_data["acc"])
+        result["avg_wall_time"] = np.nanmean(self.eval_data["wall_time"])
+        result["avg_total_tokens"] = np.nanmean(self.eval_data["total_tokens"])
+        result["avg_total_cost"] = np.nanmean(self.eval_data["total_cost"])
+        result["avg_steps"] = np.nanmean(self.eval_data["steps"])
+        result["avg_token_cost"] = np.nanmean(self.eval_data["token_cost"])
+        result["avg_tool_cost"] = np.nanmean(self.eval_data["tool_cost"])
+        return result
+
 
     def get_metrics(self, query, label, pred):
         if pred is None:

@@ -4,6 +4,10 @@ from langchain.agents import Tool
 from langchain.agents.react.base import DocstoreExplorer
 from langchain.utilities import SerpAPIWrapper
 from langchain.utilities.wolfram_alpha import WolframAlphaAPIWrapper
+from langchain.document_loaders import TextLoader
+from langchain.indexes import VectorstoreIndexCreator
+import requests
+from geopy.geocoders import Nominatim
 
 from nodes.Node import Node
 
@@ -18,6 +22,26 @@ class GoogleWorker(Node):
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
         tool = SerpAPIWrapper()
+        evidence = tool.run(input)
+        assert isinstance(evidence, self.output_type)
+        if log:
+            print(f"Running {self.name} with input {input}\nOutput: {evidence}\n")
+        return evidence
+
+
+class YelpWorker(Node):
+    def __init__(self, name="Yelp"):
+        super().__init__(name, input_type=str, output_type=str)
+        self.isLLMBased = False
+        self.description = "Worker that searches results from Yelp. Useful when you need to find reviews about a " \
+                           "restaurant. Input should be a search query."
+
+    def run(self, input, log=False):
+        assert isinstance(input, self.input_type)
+        tool = SerpAPIWrapper()
+        tool.params = {
+            "engine": "yelp",
+        }
         evidence = tool.run(input)
         assert isinstance(evidence, self.output_type)
         if log:
@@ -99,8 +123,8 @@ class WolframAlphaWorker(Node):
     def __init__(self, name="WolframAlpha"):
         super().__init__(name, input_type=str, output_type=str)
         self.isLLMBased = False
-        self.description = "A wolfram alpha search engine. Useful when you need short answers about Math, " \
-                           "Science, Technology. Input should be a search query."
+        self.description = "A WolframAlpha search engine. Useful when you need to solve a complicated Mathematical or " \
+                           "Algebraic equation. Input should be an equation or function."
 
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
@@ -142,7 +166,7 @@ class LLMWorker(Node):
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
         llm = OpenAI(temperature=0)
-        prompt = PromptTemplate(template="Respond directly with no extra words.\n\n{request}",
+        prompt = PromptTemplate(template="Respond in short directly with no extra words.\n\n{request}",
                                 input_variables=["request"])
         tool = LLMChain(prompt=prompt, llm=llm, verbose=False)
         response = tool(input)
@@ -153,9 +177,73 @@ class LLMWorker(Node):
         return evidence
 
 
+class ZipCodeRetriever(Node):
+
+    def __init__(self, name="ZipCodeRetriever"):
+        super().__init__(name, input_type=str, output_type=str)
+        self.isLLMBased = False
+        self.description = "A zip code retriever. Useful when you need to get users' current zip code. Input can be " \
+                           "left blank."
+
+    def get_ip_address(self):
+        response = requests.get("https://ipinfo.io/json")
+        data = response.json()
+        return data["ip"]
+
+    def get_location_data(sefl,ip_address):
+        url = f"https://ipinfo.io/{ip_address}/json"
+        response = requests.get(url)
+        data = response.json()
+        return data
+
+    def get_zipcode_from_lat_long(self, lat, long):
+        geolocator = Nominatim(user_agent="zipcode_locator")
+        location = geolocator.reverse((lat, long))
+        return location.raw["address"]["postcode"]
+
+    def get_current_zipcode(self):
+        ip_address = self.get_ip_address()
+        location_data = self.get_location_data(ip_address)
+        lat, long = location_data["loc"].split(",")
+        zipcode = self.get_zipcode_from_lat_long(float(lat), float(long))
+        return zipcode
+
+    def run(self, input):
+        assert isinstance(input, self.input_type)
+        evidence = self.get_current_zipcode()
+        assert isinstance(evidence, self.output_type)
+
+
+class SearchDocWorker(Node):
+
+    def __init__(self, doc_name, doc_path, name="SearchDoc"):
+        super().__init__(name, input_type=str, output_type=str)
+        self.isLLMBased = True
+        self.doc_path = doc_path
+        self.description = f"A vector store that searches for similar and related content in document: {doc_name}. " \
+                           f"The result might contain some irrelevant information in response chunk so always use an LLM " \
+                           f"afterwards to retrieve key knowledge. Input should be a search query."
+
+    def run(self, input, log=False):
+        assert isinstance(input, self.input_type)
+        loader = TextLoader(self.doc_path)
+        vectorstore = VectorstoreIndexCreator().from_loaders([loader]).vectorstore
+        evidence = vectorstore.similarity_search(input, k=1)[0].page_content
+        assert isinstance(evidence, self.output_type)
+        if log:
+            print(f"Running {self.name} with input {input}\nOutput: {evidence}\n")
+        return evidence
+
+
+class SearchSOTUWorker(SearchDocWorker):
+    def __init__(self, name="SearchSOTU"):
+        super().__init__(name=name, doc_name="state_of_the_union", doc_path="data/docs/state_of_the_union.txt")
+
+
 WORKER_REGISTRY = {"Google": GoogleWorker(),
                    "Wikipedia": WikipediaWorker(),
                    "LookUp": DocStoreLookUpWorker(),
                    "WolframAlpha": WolframAlphaWorker(),
                    "Calculator": CalculatorWorker(),
-                   "LLM": LLMWorker()}
+                   "LLM": LLMWorker(),
+                   "SearchSOTU": SearchSOTUWorker()}
