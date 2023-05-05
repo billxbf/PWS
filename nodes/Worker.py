@@ -129,7 +129,7 @@ class WolframAlphaWorker(Node):
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
         tool = CustomWolframAlphaAPITool()
-        evidence = tool.run(input)
+        evidence = tool.run(input).replace("Answer:", "").strip()
         assert isinstance(evidence, self.output_type)
         if log:
             print(f"Running {self.name} with input {input}\nOutput: {evidence}\n")
@@ -148,7 +148,7 @@ class CalculatorWorker(Node):
         llm = OpenAI(temperature=0)
         tool = LLMMathChain(llm=llm, verbose=False)
         response = tool(input)
-        evidence = response["answer"]
+        evidence = response["answer"].replace("Answer:", "").strip()
         assert isinstance(evidence, self.output_type)
         if log:
             return {"input": response["question"], "output": response["answer"]}

@@ -38,7 +38,7 @@ class PWS:
         planner_log = planner_response["input"] + planner_response["output"]
         self.plans = self._parse_plans(plan)
         self.planner_evidences = self._parse_planner_evidences(plan)
-        #assert len(self.plans) == len(self.planner_evidences)
+        assert len(self.plans) == len(self.planner_evidences)
 
         # Work
         self._get_worker_evidences()

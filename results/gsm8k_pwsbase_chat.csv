@@ -3,7 +3,7 @@ question,answer,label,preds,em,f1,acc,wall_time,total_tokens,steps,tool_cost,tok
 Then add the packages the first center processes: 30000 packages/day + 10000 packages/day = <<30000+10000=40000>>40000 packages/day
 Then multiply the number of packages by Amazon's profit per package to find Amazon's daily profit: 40000 packages/day * $0.05/package = $2000/day
 Then multiply the daily profits by the number of days in a week to find the weekly profits: $2000/day * 7 days/week = $<<2000*7=14000>>14000/week
-#### 14000",14000,nan,False,0.0,0,,,,,,
+#### 14000",14000,14000.0,False,0.0,0,5.53435206413269,884,2,0.0,0.004018,0.004018
 "The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?","Let M be the number of square feet in Matha's bedroom
 Jenny's bedroom is M+60 square feet.
 M+M+60=300
@@ -11,7 +11,7 @@ M+M+60=300
 2M=240
 M=<<120=120>>120
 Martha's bedroom is 120 square feet.
-#### 120",120,Martha's bedroom is 120 square feet.,False,0.2857142857142857,1,9.086602926254272,932.0,3.0,0.0,0.003322,0.003322
+#### 120",120,Martha's bedroom is 120 square feet.,False,0.2857142857142857,1,5.540369749069214,803,3,0.0,0.001768,0.001768
 "Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?","Toby: 2x-10
 Rebecca: (2x-10)-8=2x-18
 Total:2x-10+2x-18+x=157
@@ -19,4 +19,31 @@ Total:2x-10+2x-18+x=157
 5x=185
 x=<<37=37>>37 hours
 Rebecca:2(37)-18=56 hours
-#### 56",56,nan,False,0.0,0,,,,,,
+#### 56",56,9 hours.,False,0.0,0,6.390907287597656,842,3,0.0,0.001882,0.001882
+"Two-thirds of the class have brown eyes. Half of the students with brown eyes have black hair. If there are 6 students in the class with brown eyes and black hair, how many students are there in total?","There are 6 * 2 = <<6*2=12>>12 students with brown eyes and hair of any color.
+There are 12 * 3/2 = <<12*3/2=18>>18 students in total.
+#### 18",18,There are 18 students in total.,False,0.2857142857142857,1,7.168095111846924,1030,3,0.0,0.006488000000000001,0.006488000000000001
+"Jackie spends 8 hours working, 3 hours of exercise and spends 8 hours of sleep per day. How much free time does Jackie have?","Jackie spends a total of 8 + 8 + 3 = <<8+8+3=19>>19 hours on work, exercise, and sleeping.
+Therefore he has 24 - 19 = <<24-19=5>>5 hours of free time.
+#### 5",5,5 hours.,False,0.6666666666666666,1,7.3898255825042725,954,3,0.0,0.006084,0.006084
+"If Layla scored 104 goals in four hockey games and Kristin scored 24 fewer goals in the same four games, calculate the average number of goals the two scored.","If Layla scored 104 goals in four hockey games and Kristin scored 24 fewer goals in the same four games, Kristin scored 104-24 = <<104-24=80>>80 goals.
+The combined number of goals they scored is 80+104 = <<80+104=184>>184
+The average number of goals they scored is 184/2 = <<184/2=92>>92
+#### 92",92,212.0,False,0.0,0,6.634716033935547,992,3,0.0,0.00625,0.00625
+"Bugs are thriving in a garden of 30 plants. The bugs are very hungry today and completely ate 20 plants. The next day, they were still full and only ate half of the remaining plants. After that, they ate only 1 of the plants that were left. How many plants remain?","The bugs ate enough plants for there to be 30-20=<<30-20=10>>10 left.
+They were still full and only ate half, leaving 10/2=<<10/2=5>>5 plants left.
+Later on, the bugs only ate 1 more which left 5-1=<<5-1=4>>4 plants in the garden.
+#### 4",4,10 plants remain.,False,0.0,0,7.885641813278198,1194,2,0.0,0.009264000000000001,0.009264000000000001
+"A family is going to the amusement park. The adult tickets cost $22 for admission, and the tickets for children cost $7. The family consists of 2 adults and 2 children. What is the total price the family will pay for admission?","To solve this problem you can set up an equation to represent the total price the family will pay, with a representing the number of adult tickets, c representing the number of children’s tickets, and p representing the total price of admission.
+Thus 22a + 7c = p
+Plug in the number of adults and children that plan to go to the amusement park: 22(2) + 7(2) = $<<22*2+7*2=58>>58 is the total cost for admission
+#### 58",58,$58,True,1.0,1,8.923774719238281,1124,2,0.0,0.008512,0.008512
+"A retailer sells any shirt for the same price and any pair of pants for the same price, but the price of shirts and pants are not the same. Say you bought 2 shirts and 3 pairs of pants for $120 in total, then you realized you didn't need the extra pants. What's the price of 1 shirt at this place if when you returned all 3 pairs of pants you were refunded 25% of what you originally paid?","If I paid $120 and I was refunded 25% for all the 3 pants, then that means I received 25%*120=$<<120*25*.01=30>>30
+This means the total price of the 2 shirts was 120-30 = <<120-30=90>>90
+The price of one shirt is thus 90/2 = <<90/2=45>>45
+#### 45",45,The price of 1 shirt at this place is $45.,False,0.19999999999999998,1,6.289262533187866,1069,3,0.0,0.004316,0.004316
+"Half of Taylor's house guests like weak coffee and the other half like strong coffee in the morning.  Taylor uses 1 tablespoon of coffee per cup of water to make it weak and he doubles that amount to make it strong.  If he makes 12 cups of both weak and strong coffee, how many tablespoons of coffee will he need?","He uses 1 tablespoon for weak coffee and doubles that for strong so the strong uses 1*2 = <<1*2=2>>2 tablespoons
+For the weak coffee he uses 1 tablespoon per 1 cup of water and he needs to make 12 cups so he'll use 1*12 = <<1*12=12>>12 tablespoons
+For the strong coffee he uses 2 tablespoons per 1 cup of water and he needs to make 12 cups so he'll use 2*12 = <<2*12=24>>24 tablespoons
+All total he will use 12 tablespoons for the weak coffee and 24 tablespoons for the strong coffee for a total of 12+24 = <<36=36>>36 tablespoons
+#### 36",36,"[60.0, 120.0] (total number of tablespoons of coffee needed for weak and strong coffee)",False,0.0,0,11.993833541870117,1299,4,0.0,0.009168,0.009168

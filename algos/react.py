@@ -12,6 +12,7 @@ from langchain.tools.base import BaseTool
 from langchain.prompts.base import BasePromptTemplate
 from typing import Any, List, Optional, Sequence, Tuple
 from prompts.wiki_prompt import *
+from nodes.Worker import *
 
 from utils.CustomDocstoreExplorer import CustomDocstoreExplorer
 
@@ -102,13 +103,12 @@ class ReactBase:
         return tool_usage
 
 
-# React with zero-shot prompting; Instead of Wikipedia search and lookup, ReactZeroShot uses google search
-# and a LLM based calculator (LLM+Python REPL)
-class ReactZeroShot(ReactBase):
-    def __init__(self, model_name="text-davinci-003", verbose=True):
+class ReactExtraTool(ReactBase):
+    def __init__(self, model_name="text-davinci-003", available_tools=["Google", "Calculator"], fewshot="\n", verbose=True):
         self.model_name = model_name
         self.verbose = verbose
-
+        self.fewshot = fewshot
+        self.available_tools = available_tools
         self.tools = self._load_tools()
         self.agent = initialize_agent(self.tools,
                                       OpenAI(temperature=0, model_name=self.model_name),
@@ -132,11 +132,20 @@ class ReactZeroShot(ReactBase):
             result["completion_tokens"] = cb.completion_tokens
             result["total_cost"] = cb.total_cost + result["tool_usage"]["llm-math_token"] * 0.000002 + \
                                    result["tool_usage"]["serpapi"] * 0.01  # Developer Plan
+            result["steps"] = len(response["intermediate_steps"]) + 1
+            result["token_cost"] = result["total_cost"]
+            result["tool_cost"] = 0
 
         return result
 
     def _load_tools(self):
-        return load_tools(["serpapi", "llm-math"], llm=OpenAI(temperature=0, model_name=self.model_name))
+        tools = []
+        for tool_name in self.available_tools:
+            tool_cls = WORKER_REGISTRY[tool_name]
+            tools += [Tool(name=tool_name,
+                           func=tool_cls.run,
+                           description=tool_cls.description)]
+        return tools
 
     def reset(self):
         self.tools = self._load_tools()
@@ -145,6 +154,7 @@ class ReactZeroShot(ReactBase):
                                       agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
                                       verbose=self.verbose,
                                       return_intermediate_steps=True)
+        self.agent.agent.llm_chain.prompt.template = PREFIX + self._generate_tool_prompt() + "\n" + self.fewshot
 
     def _parse_tool(self, intermediate_steps):
         tool_usage = {"serpapi": 0, "llm-math_token": 0}
@@ -154,3 +164,19 @@ class ReactZeroShot(ReactBase):
             if step[0].tool == "Calculator":
                 tool_usage["llm-math_token"] += len(step[0].tool_input + step[1]) // 4  # 4 chars per token
         return tool_usage
+
+    def _get_worker(self, name):
+        if name in WORKER_REGISTRY:
+            return WORKER_REGISTRY[name]
+        else:
+            raise ValueError("Worker not found")
+    def _generate_tool_prompt(self):
+        prompt = "Tools can be one of the following:\n"
+        for name in self.available_tools:
+            worker = self._get_worker(name)
+            prompt += f"{worker.name}[input]: {worker.description}\n"
+        return prompt + "\n"
+
+
+PREFIX =  """Answer the following questions as best you can. You have access to the following tools:
+"""

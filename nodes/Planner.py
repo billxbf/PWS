@@ -16,7 +16,7 @@ class Planner(LLMNode):
 
     def run(self, input, log=False):
         assert isinstance(input, self.input_type)
-        prompt = self.prefix + self.worker_prompt + self.suffix + self.fewshot + input + '\n'
+        prompt = self.prefix + self.worker_prompt + self.fewshot + self.suffix + input + '\n'
         response = self.call_llm(prompt, self.stop)
         completion = response["output"]
         if log:

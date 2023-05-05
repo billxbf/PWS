@@ -8,10 +8,55 @@ The Front Range, Wet Mountains, and Sangre de Cristo Mountains have varying elev
 Step 3: Combine the elevation ranges
 Considering the elevation ranges of the three mountain ranges in the eastern sector of the Colorado Orogeny, the overall elevation range for the area extends from around 5,000 feet (1,500 meters) to over 14,000 feet (4,300 meters).
 Answer: 5,000 feet to 4,000 feet
+
+Which magazine was started first Arthur’s Magazine or First for Women?
+Step 1: Identify when was Arthur’s Magazine started
+Arthur’s Magazine was started in 1844.
+Step 2: Identify when was First for Women started
+First for Women was started 1989
+Step 3: Compare the two dates and determine which magazine was started first
+Answer: Arthur’s Magazine
+
+
 '''
 
-HOTPOTQA_REACT = 'Solve a question answering task with interleaving Thought, Action, Observation steps. Thought can reason about the current situation, and Action can be three types:\n(1) Search[entity], which searches the exact entity on Wikipedia and returns the first paragraph if it exists. If not, it will return some similar entities to search.\n(2) Lookup[keyword], which returns the next sentence containing keyword in the current passage.\n(3) Finish[answer], which returns the answer and finishes the task.\nHere are some examples.\n\nQuestion: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?\nThought: I need to search Colorado orogeny, find the area that the eastern sector of the Colorado orogeny extends into, then find the elevation range of the area.\nAction: Search[Colorado orogeny]\nObservation: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado and surrounding areas.\nThought: It does not mention the eastern sector. So I need to look up eastern sector.\nAction: Lookup[eastern sector]\nObservation: (Result 1 / 1) The eastern sector extends into the High Plains and is called the Central Plains orogeny.\nThought: The eastern sector of Colorado orogeny extends into the High Plains. So I need to search High Plains and find its elevation range.\nAction: Search[High Plains]\nObservation: High Plains refers to one of two distinct land regions\nThought: I need to instead search High Plains (United States).\nAction: Search[High Plains (United States)]\nObservation: The High Plains are a subregion of the Great Plains. From east to west, the High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130 m).[3]\nThought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer is 1,800 to 7,000 ft.\nAction: Finish[1,800 to 7,000 ft]\n\nQuestion: Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?\nThought: The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after.\nAction: Search[Milhouse]\nObservation: Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening.\nThought: The paragraph does not tell who Milhouse is named after, maybe I can look up "named after".\nAction: Lookup[named after]\nObservation: (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous.\nThought: Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon.\nAction: Finish[Richard Nixon]\n\nQuestion: Which documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?\nThought: I need to search Adam Clayton Powell and The Saimaa Gesture, and find which documentary is about Finnish rock groups.\nAction: Search[Adam Clayton Powell]\nObservation: Could not find [Adam Clayton Powell]. Similar: [’Adam Clayton Powell III’, ’Seventh Avenue (Manhattan)’, ’Adam Clayton Powell Jr. State Office Building’, ’Isabel Washington Powell’, ’Adam Powell’, ’Adam Clayton Powell (film)’, ’Giancarlo Esposito’].\nThought: To find the documentary, I can search Adam Clayton Powell (film).\nAction: Search[Adam Clayton Powell (film)]\nObservation: Adam Clayton Powell is a 1989 American documentary film directed by Richard Kilberg. The film is about the rise and fall of influential African-American politician Adam Clayton Powell Jr.[3][4] It was later aired as part of the PBS series The American Experience.\nThought: Adam Clayton Powell (film) is a documentary about an African-American politician, not Finnish rock groups. So the documentary about Finnish rock groups must instead be The Saimaa Gesture.\nAction: Finish[The Saimaa Gesture]\n\nQuestion: What profession does Nicholas Ray and Elia Kazan have in common?\nThought: I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.\nAction: Search[Nicholas Ray]\nObservation: Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.\nThought: Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.\nAction: Search[Elia Kazan]\nObservation: Elia Kazan was an American film and theatre director, producer, screenwriter and actor.\nThought: Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.\nAction: Finish[director, screenwriter, actor]\n\nQuestion: Which magazine was started first Arthur’s Magazine or First for Women?\nThought: I need to search Arthur’s Magazine and First for Women, and find which was started first.\nAction: Search[Arthur’s Magazine]\nObservation: Arthur’s Magazine (1844-1846) was an American literary periodical published in Philadelphia in the 19th century.\nThought: Arthur’s Magazine was started in 1844. I need to search First for Women next.\nAction: Search[First for Women]\nObservation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.\nThought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.\nAction: Finish[Arthur’s Magazine]\n\nQuestion: Were Pavel Urysohn and Leonid Levin known for the same type of work?\nThought: I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.\nAction: Search[Pavel Urysohn]\nObservation: Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet mathematician who is best known for his contributions in dimension theory.\nThought: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and find its type of work.\nAction: Search[Leonid Levin]\nObservation: Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.\nThought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.\nAction: Finish[yes]\n\n\nQuestion: {input}\n{agent_scratchpad}'
+#HOTPOTQA_REACT = 'Solve a question answering task with interleaving Thought, Action, Observation steps. Thought can reason about the current situation, and Action can be three types:\n(1) Search[entity], which searches the exact entity on Wikipedia and returns the first paragraph if it exists. If not, it will return some similar entities to search.\n(2) Lookup[keyword], which returns the next sentence containing keyword in the current passage.\n(3) Finish[answer], which returns the answer and finishes the task.\nHere are some examples.\n\nQuestion: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?\nThought: I need to search Colorado orogeny, find the area that the eastern sector of the Colorado orogeny extends into, then find the elevation range of the area.\nAction: Search[Colorado orogeny]\nObservation: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado and surrounding areas.\nThought: It does not mention the eastern sector. So I need to look up eastern sector.\nAction: Lookup[eastern sector]\nObservation: (Result 1 / 1) The eastern sector extends into the High Plains and is called the Central Plains orogeny.\nThought: The eastern sector of Colorado orogeny extends into the High Plains. So I need to search High Plains and find its elevation range.\nAction: Search[High Plains]\nObservation: High Plains refers to one of two distinct land regions\nThought: I need to instead search High Plains (United States).\nAction: Search[High Plains (United States)]\nObservation: The High Plains are a subregion of the Great Plains. From east to west, the High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130 m).[3]\nThought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer is 1,800 to 7,000 ft.\nAction: Finish[1,800 to 7,000 ft]\n\nQuestion: Musician and satirist Allie Goertz wrote a song about the "The Simpsons" character Milhouse, who Matt Groening named after who?\nThought: The question simplifies to "The Simpsons" character Milhouse is named after who. I only need to search Milhouse and find who it is named after.\nAction: Search[Milhouse]\nObservation: Milhouse Mussolini Van Houten is a recurring character in the Fox animated television series The Simpsons voiced by Pamela Hayden and created by Matt Groening.\nThought: The paragraph does not tell who Milhouse is named after, maybe I can look up "named after".\nAction: Lookup[named after]\nObservation: (Result 1 / 1) Milhouse was named after U.S. president Richard Nixon, whose middle name was Milhous.\nThought: Milhouse was named after U.S. president Richard Nixon, so the answer is Richard Nixon.\nAction: Finish[Richard Nixon]\n\nQuestion: Which documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?\nThought: I need to search Adam Clayton Powell and The Saimaa Gesture, and find which documentary is about Finnish rock groups.\nAction: Search[Adam Clayton Powell]\nObservation: Could not find [Adam Clayton Powell]. Similar: [’Adam Clayton Powell III’, ’Seventh Avenue (Manhattan)’, ’Adam Clayton Powell Jr. State Office Building’, ’Isabel Washington Powell’, ’Adam Powell’, ’Adam Clayton Powell (film)’, ’Giancarlo Esposito’].\nThought: To find the documentary, I can search Adam Clayton Powell (film).\nAction: Search[Adam Clayton Powell (film)]\nObservation: Adam Clayton Powell is a 1989 American documentary film directed by Richard Kilberg. The film is about the rise and fall of influential African-American politician Adam Clayton Powell Jr.[3][4] It was later aired as part of the PBS series The American Experience.\nThought: Adam Clayton Powell (film) is a documentary about an African-American politician, not Finnish rock groups. So the documentary about Finnish rock groups must instead be The Saimaa Gesture.\nAction: Finish[The Saimaa Gesture]\n\nQuestion: What profession does Nicholas Ray and Elia Kazan have in common?\nThought: I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.\nAction: Search[Nicholas Ray]\nObservation: Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 - June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.\nThought: Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.\nAction: Search[Elia Kazan]\nObservation: Elia Kazan was an American film and theatre director, producer, screenwriter and actor.\nThought: Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.\nAction: Finish[director, screenwriter, actor]\n\nQuestion: Which magazine was started first Arthur’s Magazine or First for Women?\nThought: I need to search Arthur’s Magazine and First for Women, and find which was started first.\nAction: Search[Arthur’s Magazine]\nObservation: Arthur’s Magazine (1844-1846) was an American literary periodical published in Philadelphia in the 19th century.\nThought: Arthur’s Magazine was started in 1844. I need to search First for Women next.\nAction: Search[First for Women]\nObservation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.\nThought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.\nAction: Finish[Arthur’s Magazine]\n\nQuestion: Were Pavel Urysohn and Leonid Levin known for the same type of work?\nThought: I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.\nAction: Search[Pavel Urysohn]\nObservation: Pavel Samuilovich Urysohn (February 3, 1898 - August 17, 1924) was a Soviet mathematician who is best known for his contributions in dimension theory.\nThought: Pavel Urysohn is a mathematician. I need to search Leonid Levin next and find its type of work.\nAction: Search[Leonid Levin]\nObservation: Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.\nThought: Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.\nAction: Finish[yes]\n\n\nQuestion: {input}\n{agent_scratchpad}'
 
+HOTPOTQA_REACT = '''Solve a question answering task with interleaving Thought, Action, Observation steps. Thought can reason about the current situation, and Action can be three types:
+(1) Search[entity], which searches the exact entity on Wikipedia and returns the first paragraph if it exists. If not, it will return some similar entities to search.
+(2) Lookup[keyword], which returns the next sentence containing keyword in the current passage.
+(3) Finish[answer], which returns the answer and finishes the task.
+Here are some examples.
+
+Question: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
+Thought: I need to search Colorado orogeny, find the area that the eastern sector of the Colorado orogeny extends into, then find the elevation range of the area.
+Action: Search[Colorado orogeny]
+Observation: The Colorado orogeny was an episode of mountain building (an orogeny) in Colorado and surrounding areas.
+Thought: It does not mention the eastern sector. So I need to look up eastern sector.
+Action: Lookup[eastern sector]
+Observation: (Result 1 / 1) The eastern sector extends into the High Plains and is called the Central Plains orogeny.
+Thought: The eastern sector of Colorado orogeny extends into the High Plains. So I need to search High Plains and find its elevation range.
+Action: Search[High Plains]
+Observation: High Plains refers to one of two distinct land regions
+Thought: I need to instead search High Plains (United States).
+Action: Search[High Plains (United States)]
+Observation: The High Plains are a subregion of the Great Plains. From east to west, the High Plains rise in elevation from around 1,800 to 7,000 ft (550 to 2,130 m).[3]
+Thought: High Plains rise in elevation from around 1,800 to 7,000 ft, so the answer is 1,800 to 7,000 ft.
+Action: Finish[1,800 to 7,000 ft]
+
+Question: Which magazine was started first Arthur’s Magazine or First for Women?
+Thought: I need to search Arthur’s Magazine and First for Women, and find which was started first.
+Action: Search[Arthur’s Magazine]
+Observation: Arthur’s Magazine (1844-1846) was an American literary periodical published in Philadelphia in the 19th century.
+Thought: Arthur’s Magazine was started in 1844. I need to search First for Women next.
+Action: Search[First for Women]
+Observation: First for Women is a woman’s magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989.
+Thought: First for Women was started in 1989. 1844 (Arthur’s Magazine) < 1989 (First for Women), so Arthur’s Magazine was started first.
+Action: Finish[Arthur’s Magazine]
+
+
+Question: {input}
+{agent_scratchpad}'''
 
 HOTPOTQA_PWS_BASE = '''Question: What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
 Plan: Search for more information about Colorado orogeny.
@@ -99,23 +144,96 @@ Rebecca = 56
 Answer: 56
 '''
 
-GSM8K_PWS = '''Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?
-Plan: Translate the problem into algebraic expressions.
-#E1 = LLM[Translate following problem into algebraic expressions: Thomas, Toby, and Rebecca worked a total of 157 hours in one week. Thomas worked x hours. Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby. How many hours did Rebecca work?]
-Plan: Use Wolfram Alpha to solve the equation.
-#E2 = WolframAlpha[Solve #E1]
+DEFAULT_REACT = '''Use the following format:
 
-The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?
-Plan: Directly ask LLM to give the answer since it is a simple math problem.
-#E1 = LLM[What is the answer to the following problem: The square footage of the two bedrooms in the apartment that Jenny and Martha share totals 300 square feet. If Jenny's bedroom is 60 square feet larger than Martha's, how large, in square feet, is Martha's bedroom?]
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [WolframAlpha, Calculator, LLM]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input questionHere are some examples.
+
+Begin!
+
+Question: {input}
+{agent_scratchpad}
+'''
+
+DISFL_REACT = '''Use the following format:
+
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [WolframAlpha, Calculator, LLM]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input questionHere are some examples.
+
+Begin!
+
+For Example:
+What do petrologists use rock samples or rather electron microprobes in the laboratory for ?  
+context: In addition to identifying rocks in the field , petrologists identify rock samples in the laboratory . Two of the primary methods for identifying rocks in the laboratory are through optical microscopy and by using an electron microprobe . In an optical mineralogy analysis , thin sections of rock samples are analyzed through a petrographic microscope , where the minerals can be identified through their different properties in plane - polarized and cross - polarized light , including their birefringence , pleochroism , twinning , and interference properties with a conoscopic lens . In the electron microprobe , individual locations are analyzed for their exact chemical compositions and variation in composition within individual crystals . Stable and radioactive isotope studies provide insight into the geochemical evolution of rock units .
+
+Question: {input}
+{agent_scratchpad}
+'''
+
+GSM8K_REACT = '''Use the following format:
+
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [WolframAlpha, Calculator, LLM]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input questionHere are some examples.
+
+For Example:
+Gary manages two Amazon distribution centers. The first center processes 10000 packages per day, and the second center processes three times that volume. If Amazon makes 5 cents of profit per package, how much profit per week do the two centers make combined?
+Thought: I need to know the total number of packages processed by two centers per week.
+Action: Calculator
+Action Input: (10000 * 7) + (3 * 10000 * 7)
+Observation: 280000
+Thought: Now I know how much profit the two centers make combined per week.
+Action: Calculator
+Action Input: 280000 * 0.05
+Observation: 14000
+Thought: I now know the final answer
+Final Answer: 14000
+
+Begin!
+
+Question: {input}
+{agent_scratchpad}
+'''
+
+GSM8K_PWS = '''For Example:
+Thomas, Toby, and Rebecca worked a total of 157 hours in one week.  Thomas worked x hours.  Toby worked 10 hours less than twice what Thomas worked, and Rebecca worked 8 hours less than Toby.  How many hours did Rebecca work?
+Plan: Given Thomas worked x hours, translate the problem into algebraic expressions and solve with Wolfram Alpha.
+#E1 = WolframAlpha[Solve x + (2x - 10) + ((2x - 10) - 8) = 157]
+Plan: Find out the number of hours Rebecca worked.
+#E2 = LLM[What is (2x - 10) - 8, given #E1]
+
+Gary manages two Amazon distribution centers. The first center processes 10000 packages per day, and the second center processes three times that volume. If Amazon makes 5 cents of profit per package, how much profit per week do the two centers make combined?
+Plan: Find the total number of packages processed per week by both centers.
+#E1 = Calculator[(10000 * 7) + (3 * 10000 * 7)]
+Plan: Find the total profit per week made by both centers.
+#E2 = Calculator[#E1 * 0.05]
 
 '''
 
-SOTU_PWS_EXTRA = '''What are other institutions serving for similar goals as NATO?
-PLan: Find out what the goals of NATO are.
-#E1 = SearchSOTU[goals of NATO]
-Plan: Summarize the goals of NATO in several words.
-#E2 = LLM[In several words, summarize the goals of NATO. Given context: #E1]
-Plan: Search for institutions that serve similar goals.
-#E3 = Google[institutions that serve for #E2]
+
+STRATEGY_COT = '''What is the elevation range for the area that the eastern sector of the Colorado orogeny extends into?
+Step 1: Identify the eastern sector of the Colorado Orogeny
+The Colorado Orogeny refers to a series of mountain-building events that occurred in the Rocky Mountains, primarily in the present-day U.S. state of Colorado. The eastern sector of the Colorado Orogeny likely refers to the easternmost part of this mountain range, which includes the Front Range, Wet Mountains, and the Sangre de Cristo Mountains.
+Step 2: Determine the elevation range of the eastern sector
+The Front Range, Wet Mountains, and Sangre de Cristo Mountains have varying elevations. The Front Range has elevations ranging from around 5,000 feet to over 14,000 feet (1,500 meters to 4,300 meters). The Wet Mountains have elevations ranging from about 6,000 feet to over 12,000 feet (1,800 meters to 3,700 meters). The Sangre de Cristo Mountains have elevations ranging from approximately 7,000 feet to over 14,000 feet (2,100 meters to 4,300 meters).
+Step 3: Combine the elevation ranges
+Considering the elevation ranges of the three mountain ranges in the eastern sector of the Colorado Orogeny, the overall elevation range for the area extends from around 5,000 feet (1,500 meters) to over 14,000 feet (4,300 meters).
+Answer: 5,000 feet to 4,000 feet
 '''

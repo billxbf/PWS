@@ -69,7 +69,7 @@ def llm_accuracy_score(query, prediction, ground_truth):
 
 class Evaluator:
     def __init__(self, task, dataset, algo, maxtry=3):
-        assert task in ["hotpot_qa", "fever", "trivia_qa", "gsm8k"]
+        assert task in ["hotpot_qa", "fever", "trivia_qa", "gsm8k", "physics_question", "disfl_qa", "sports_understanding", "strategy_qa"]
         assert isinstance(dataset, pd.DataFrame)
         assert isinstance(algo, (PWS_Base, PWS_Extra, ReactBase, IO, CoT))
 
@@ -127,6 +127,17 @@ class Evaluator:
                     except:
                         response = self.failed_response
                 self._update_eval_dict(question, label, response)
+        elif self.task in ["physics_question", "disfl_qa", "sports_understanding", "strategy_qa"]:
+            for i in tqdm.tqdm(range(len(self.dataset))):
+                question = self.dataset["input"][i]
+                label = self.dataset["target"][i]
+                for _ in range(self.maxtry):
+                    try:
+                        response = self.algo.run(question)
+                        break
+                    except:
+                        response = self.failed_response
+                self._update_eval_dict(question, label, response)
         else:
             raise NotImplementedError
 
@@ -135,7 +146,7 @@ class Evaluator:
 
     def _initialize_eval_dict(self):
         data = {}
-        for d in ["label", "preds", "em", "f1", "acc", "wall_time", "total_tokens", "total_cost", "steps", "token_cost", "tool_cost"]:
+        for d in ["label", "preds", "em", "f1", "acc", "wall_time", "total_tokens", "total_cost", "steps", "token_cost", "tool_cost", "planner_log", "solver_log"]:
             data[d] = []
         return data
 
@@ -152,6 +163,11 @@ class Evaluator:
         self.eval_data["steps"] += [response["steps"]]
         self.eval_data["token_cost"] += [response["token_cost"]]
         self.eval_data["tool_cost"] += [response["tool_cost"]]
+
+        if "planner_log" in response:
+            self.eval_data["planner_log"] += [response["planner_log"]]
+        if "solver_log" in response:
+            self.eval_data["solver_log"] += [response["solver_log"]]
 
     def _get_avg_results(self):
         result = {}
